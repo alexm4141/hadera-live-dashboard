@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hadera Live Telemetry — Weather, ILS FX (USD/EUR) & Bitcoin</title>
+  <meta name="description" content="Real-time dashboard for Hadera, Israel weather conditions, ILS to USD and EUR exchange rates with interactive currency converter, and live Bitcoin (BTC) market price." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="index.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <!-- Top Header -->
+    <header class="top-header">
+      <div class="brand-group">
+        <div class="brand-mark" aria-hidden="true">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/><circle cx="12" cy="12" r="4"/>
+          </svg>
+        </div>
+        <div class="brand-titles">
+          <h1>
+            Hadera Live Desk
+            <span class="location-tag">32.4340° N, 34.9197° E</span>
+          </h1>
+          <p class="brand-subtitle">Hadera, Israel • Real-Time Weather, ILS Foreign Exchange &amp; Bitcoin Market Feed</p>
+        </div>
+      </div>
+
+      <div class="header-controls">
+        <div class="clock-box">
+          <div id="israel-clock-time" class="clock-time">--:--:-- IST</div>
+          <div id="israel-clock-date" class="clock-date">Loading Jerusalem Time...</div>
+        </div>
+
+        <div class="status-badge" id="sync-status-badge" title="Auto-refreshes every 60 seconds">
+          <span id="sync-status-dot" class="status-dot loading"></span>
+          <span id="sync-status-text">Syncing live feeds...</span>
+        </div>
+
+        <button id="btn-refresh" class="btn-action" type="button" aria-label="Refresh all live feeds">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/>
+            <path d="M3 3v5h5"/>
+            <path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/>
+            <path d="M16 16h5v5"/>
+          </svg>
+          <span>Refresh</span>
+        </button>
+
+        <button id="btn-theme" class="btn-action" type="button" aria-label="Toggle color theme">
+          <svg id="theme-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="5"/>
+            <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+          </svg>
+          <span id="theme-label">Light</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Main Dashboard Grid -->
+    <main class="dashboard-grid">
+      <!-- 1. Hadera Live Weather Panel -->
+      <section class="panel panel-weather" aria-labelledby="heading-weather">
+        <div class="panel-header">
+          <div class="panel-title-group">
+            <span class="panel-eyebrow">Meteorological Telemetry • Hadera, Haifa District, IL</span>
+            <h2 id="heading-weather" class="panel-title">Live Weather in Hadera, Israel</h2>
+          </div>
+          <span id="weather-source-pill" class="source-pill">Open-Meteo High-Res</span>
+        </div>
+
+        <div class="weather-layout">
+          <!-- Current Weather Hero -->
+          <div class="weather-current-box">
+            <div class="weather-hero">
+              <div class="temp-main-group">
+                <div id="weather-temp" class="temp-value">--°C</div>
+                <div id="weather-condition" class="condition-label">Loading...</div>
+                <div id="weather-feels" class="feels-like">Feels like --°C</div>
+              </div>
+              <div id="weather-icon-container" class="weather-icon-wrap" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="12" cy="12" r="5"/>
+                  <line x1="12" y1="1" x2="12" y2="3"/>
+                  <line x1="12" y1="21" x2="12" y2="23"/>
+                  <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+                  <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+                  <line x1="1" y1="12" x2="3" y2="12"/>
+                  <line x1="21" y1="12" x2="23" y2="12"/>
+                </svg>
+              </div>
+            </div>
+
+            <div class="weather-metrics-grid">
+              <div class="metric-item">
+                <span class="metric-label">Humidity</span>
+                <span id="weather-humidity" class="metric-val">--%</span>
+              </div>
+              <div class="metric-item">
+                <span class="metric-label">Wind</span>
+                <span id="weather-wind" class="metric-val">-- km/h</span>
+              </div>
+              <div class="metric-item">
+                <span class="metric-label">UV Index</span>
+                <span id="weather-uv" class="metric-val">--</span>
+              </div>
+              <div class="metric-item">
+                <span class="metric-label">Pressure</span>
+                <span id="weather-pressure" class="metric-val">-- hPa</span>
+              </div>
+              <div class="metric-item">
+                <span class="metric-label">Today High / Low</span>
+                <span id="weather-hi-lo" class="metric-val">--° / --°</span>
+              </div>
+              <div class="metric-item">
+                <span class="metric-label">Sunrise / Sunset</span>
+                <span id="weather-sun" class="metric-val">--:-- / --:--</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Hourly + 7-Day Forecast -->
+          <div class="weather-details-column">
+            <div>
+              <div class="sub-section-title">
+                <span>Next 24 Hours (3-Hour Intervals)</span>
+                <span id="weather-updated-label">Local Time (Asia/Jerusalem)</span>
+              </div>
+              <div id="hourly-forecast-strip" class="hourly-strip">
+                <!-- Populated dynamically by app.js -->
+              </div>
+            </div>
+
+            <div>
+              <div class="sub-section-title">
+                <span>7-Day Outlook for Hadera</span>
+                <span>Max / Min °C</span>
+              </div>
+              <div id="daily-forecast-strip" class="daily-strip">
+                <!-- Populated dynamically by app.js -->
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 2. ILS to USD & EUR Exchange Rates Panel -->
+      <section class="panel panel-fx" aria-labelledby="heading-fx">
+        <div class="panel-header">
+          <div class="panel-title-group">
+            <span class="panel-eyebrow">Foreign Exchange • Israeli New Shekel (₪)</span>
+            <h2 id="heading-fx" class="panel-title">ILS to USD &amp; EUR Exchange Rates</h2>
+          </div>
+          <span id="fx-source-pill" class="source-pill">ECB / Frankfurter Live</span>
+        </div>
+
+        <div class="fx-rates-grid">
+          <!-- USD / ILS Card -->
+          <div class="rate-card">
+            <div class="rate-pair-header">
+              <span class="pair-badge">ILS ⇄ USD</span>
+              <span id="usd-ils-change" class="pair-change">--</span>
+            </div>
+            <div id="rate-usd-to-ils" class="rate-primary">1 USD = ₪--</div>
+            <div id="rate-ils-to-usd" class="rate-inverse">1 ILS (₪) = $-- USD</div>
+          </div>
+
+          <!-- EUR / ILS Card -->
+          <div class="rate-card">
+            <div class="rate-pair-header">
+              <span class="pair-badge">ILS ⇄ EUR</span>
+              <span id="eur-ils-change" class="pair-change">--</span>
+            </div>
+            <div id="rate-eur-to-ils" class="rate-primary">1 EUR = ₪--</div>
+            <div id="rate-ils-to-eur" class="rate-inverse">1 ILS (₪) = €-- EUR</div>
+          </div>
+        </div>
+
+        <!-- Interactive 3-Way Currency Converter -->
+        <div class="converter-box">
+          <div class="converter-header">
+            <span class="converter-title">Instant Multi-Currency Calculator</span>
+            <div class="quick-presets">
+              <button type="button" class="preset-btn" data-ils="100">₪100</button>
+              <button type="button" class="preset-btn" data-ils="1000">₪1,000</button>
+              <button type="button" class="preset-btn" data-ils="10000">₪10,000</button>
+            </div>
+          </div>
+
+          <div class="converter-inputs">
+            <div class="input-field-wrap">
+              <label for="input-ils">ILS (Israeli Shekel)</label>
+              <div class="currency-input-group">
+                <span class="currency-symbol">₪</span>
+                <input id="input-ils" class="currency-input" type="number" step="any" value="1000" aria-label="Amount in Israeli New Shekels" />
+              </div>
+            </div>
+
+            <div class="input-field-wrap">
+              <label for="input-usd">USD (US Dollar)</label>
+              <div class="currency-input-group">
+                <span class="currency-symbol">$</span>
+                <input id="input-usd" class="currency-input" type="number" step="any" value="" aria-label="Amount in US Dollars" />
+              </div>
+            </div>
+
+            <div class="input-field-wrap">
+              <label for="input-eur">EUR (Euro)</label>
+              <div class="currency-input-group">
+                <span class="currency-symbol">€</span>
+                <input id="input-eur" class="currency-input" type="number" step="any" value="" aria-label="Amount in Euros" />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 30-Day ILS FX Trend Chart -->
+        <div class="chart-box">
+          <div class="chart-header">
+            <span class="chart-title">30-Day Shekel Exchange Trend (₪ per 1 Unit)</span>
+            <div class="chart-legend">
+              <span class="legend-item">
+                <span class="legend-dot" style="background: var(--accent-sky)"></span>
+                <span id="legend-usd-range">USD/ILS</span>
+              </span>
+              <span class="legend-item">
+                <span class="legend-dot" style="background: var(--accent-emerald)"></span>
+                <span id="legend-eur-range">EUR/ILS</span>
+              </span>
+            </div>
+          </div>
+          <div id="fx-chart-container" class="svg-chart-wrap" aria-label="30-day USD and EUR to ILS exchange rate chart">
+            <!-- SVG rendered by app.js -->
+          </div>
+        </div>
+      </section>
+
+      <!-- 3. Live Bitcoin (BTC) Market Panel -->
+      <section class="panel panel-btc" aria-labelledby="heading-btc">
+        <div class="panel-header">
+          <div class="panel-title-group">
+            <span class="panel-eyebrow">Digital Asset Spot • BTC / USD • ILS • EUR</span>
+            <h2 id="heading-btc" class="panel-title">Live Bitcoin (BTC) Price</h2>
+          </div>
+          <span id="btc-source-pill" class="source-pill">CoinGecko / Binance Spot</span>
+        </div>
+
+        <div class="btc-hero-card">
+          <div class="btc-price-primary">
+            <div id="btc-price-usd" class="btc-usd">$--,---.--</div>
+            <div class="btc-sub-prices">
+              <span id="btc-price-ils">₪--,--- ILS</span>
+              <span>•</span>
+              <span id="btc-price-eur">€--,--- EUR</span>
+            </div>
+          </div>
+          <div id="btc-change-pill" class="change-pill change-up">
+            <span id="btc-change-val">+0.00% (24h)</span>
+          </div>
+        </div>
+
+        <div class="btc-stats-grid">
+          <div class="stat-tile">
+            <span class="stat-tile-label">24h High (USD)</span>
+            <span id="btc-high-24h" class="stat-tile-value">$--,---</span>
+          </div>
+          <div class="stat-tile">
+            <span class="stat-tile-label">24h Low (USD)</span>
+            <span id="btc-low-24h" class="stat-tile-value">$--,---</span>
+          </div>
+          <div class="stat-tile">
+            <span class="stat-tile-label">24h Volume</span>
+            <span id="btc-vol-24h" class="stat-tile-value">$--B</span>
+          </div>
+          <div class="stat-tile">
+            <span class="stat-tile-label">Sats per ₪1 ILS</span>
+            <span id="btc-sats-ils" class="stat-tile-value">-- sats</span>
+          </div>
+        </div>
+
+        <!-- 7-Day BTC Trend Chart -->
+        <div class="chart-box">
+          <div class="chart-header">
+            <span class="chart-title">7-Day Bitcoin Price Action (USD)</span>
+            <div class="chart-legend">
+              <span class="legend-item">
+                <span class="legend-dot" style="background: var(--accent-amber)"></span>
+                <span id="btc-chart-range">7D Range: $-- – $--</span>
+              </span>
+            </div>
+          </div>
+          <div id="btc-chart-container" class="svg-chart-wrap" aria-label="7-day Bitcoin USD price chart">
+            <!-- SVG rendered by app.js -->
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="dashboard-footer">
+      <div>
+        <span>Hadera Live Telemetry Dashboard • Coordinates: 32.4340°N, 34.9197°E</span>
+      </div>
+      <div class="footer-links">
+        <a href="https://open-meteo.com/" target="_blank" rel="noopener noreferrer">Open-Meteo Weather</a>
+        <a href="https://www.frankfurter.app/" target="_blank" rel="noopener noreferrer">Frankfurter ECB FX</a>
+        <a href="https://www.coingecko.com/" target="_blank" rel="noopener noreferrer">CoinGecko Crypto</a>
+      </div>
+    </footer>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
